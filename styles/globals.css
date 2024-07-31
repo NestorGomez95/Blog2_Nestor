@@ -1,0 +1,68 @@
+:root {
+  --darkBg: #1A1A1D;
+  --text-neonGreen: #39FF14;
+  --text-neonBlue: #1F51FF;
+  --text-neonPink: #FF1493;
+  --neonGreen: #39FF14;
+  --neonPink: #FF1493;
+  --darkSurface: #2E2E3A;
+  --text-neonPurple: #8A2BE2;
+}
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body {
+  background-color: var(--darkBg);
+  color: white;
+}
+
+h1, h2, h3 {
+  color: var(--text-neonGreen);
+}
+
+a {
+  color: var(--text-neonBlue);
+  transition-property: color;
+  transition-duration: 300ms;
+}
+
+a:hover {
+  color: var(--text-neonPink);
+}
+
+button {
+  background-color: var(--neonGreen);
+  color: black;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition-property: background-color;
+  transition-duration: 300ms;
+}
+
+button:hover {
+  background-color: var(--neonPink);
+}
+
+input, textarea {
+  background-color: var(--darkSurface);
+  color: white;
+  border: 0;
+  border-radius: 0.375rem;
+  box-shadow: 0 0 0 3px var(--neonBlue);
+}
+
+form {
+  background-color: var(--darkSurface);
+  padding: 1.5rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 0 0 3px var(--neonBlue);
+}
+
+footer {
+  background-color: var(--darkSurface);
+  color: var(--text-neonPurple);
+  padding: 1rem;
+  text-align: center;
+}
