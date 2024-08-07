@@ -1,17 +1,16 @@
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'your_secret_key';
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Espera el token en el formato 'Bearer TOKEN'
+const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization'];
 
-  if (!token) return res.sendStatus(401); // No autorizado
+  if (!token) return res.sendStatus(401);
 
-  jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.sendStatus(403); // Prohibido
+  jwt.verify(token.split(' ')[1], SECRET_KEY, (err, user) => {
+    if (err) return res.sendStatus(403);
     req.user = user;
     next();
   });
 };
 
-module.exports = { authenticateToken };
+module.exports = { verifyToken };

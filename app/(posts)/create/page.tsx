@@ -1,46 +1,39 @@
-import { useState } from 'react';
+"use client";
+
 import { useRouter } from 'next/navigation';
+import PostForm from '../../../components/Postform';
 import useAuth from '../../../hook/useAuth';
 
-export default function CreatePostPage() {
-  const { isAdmin } = useAuth();
+const CreatePostPage = () => {
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
 
-  if (!isAdmin) {
-    router.push('/auth/login');
-    return null;
+  if (!isAuthenticated) {
+    return <div>Please log in to create a post.</div>;
   }
 
-  const handleCreatePost = async (e) => {
-    e.preventDefault();
-    // Lógica para enviar el post al backend
+  const handleSubmit = async (data: { title: string; content: string }) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        router.push('/');
+      } else {
+        throw new Error('Failed to create post');
+      }
+    } catch (error) {
+      console.error('Failed to create post', error);
+    }
   };
 
-  return (
-    <div>
-      <h1>Create a New Post</h1>
-      <form onSubmit={handleCreatePost}>
-        <div>
-          <label>Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Content</label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Create Post</button>
-      </form>
-    </div>
-  );
-}
+  return <PostForm onSubmit={handleSubmit} />;
+};
+
+export default CreatePostPage;

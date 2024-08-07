@@ -1,50 +1,62 @@
+"use client";
+
 import { useState } from 'react';
 
 type PostFormProps = {
-  onSubmit: (data: { title: string; content: string }) => void;
-  initialData?: { title: string; content: string };
+  initialTitle?: string;
+  initialContent?: string;
+  onSubmit: (data: { title: string; content: string }) => Promise<void>;
 };
 
-export default function PostForm({ onSubmit, initialData }: PostFormProps) {
-  const [title, setTitle] = useState(initialData?.title || '');
-  const [content, setContent] = useState(initialData?.content || '');
+const PostForm = ({ initialTitle = '', initialContent = '', onSubmit }: PostFormProps) => {
+  const [title, setTitle] = useState(initialTitle);
+  const [content, setContent] = useState(initialContent);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, content });
+    setError('');
+    try {
+      await onSubmit({ title, content });
+    } catch (err) {
+      setError('Failed to submit post');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="mb-4">
-        <label htmlFor="title" className="block text-sm font-medium text-neonGreen">
-          Title
-        </label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="mt-1 block w-full p-2 bg-darkSurface border-none text-white rounded-md focus:ring-2 focus:ring-neonBlue"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="content" className="block text-sm font-medium text-neonGreen">
-          Content
-        </label>
-        <textarea
-          id="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          required
-          className="mt-1 block w-full p-2 bg-darkSurface border-none text-white rounded-md focus:ring-2 focus:ring-neonBlue"
-          rows={5}
-        />
-      </div>
-      <button type="submit" className="w-full bg-neonGreen text-black p-2 rounded-md hover:bg-neonPink transition-all duration-300">
-        Submit
-      </button>
-    </form>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-80">
+        <h1 className="text-2xl mb-4">New Post</h1>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        <div className="mb-4">
+          <label className="block mb-2 text-gray-700">Title</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded text-black"
+            required
+          />
+            
+        </div>
+        <div className="mb-4">
+          <label className="block mb-2 text-gray-700">Content</label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded text-black"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded mt-4"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
   );
-}
+};
+
+export default PostForm;
